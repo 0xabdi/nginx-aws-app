@@ -43,11 +43,11 @@ jobs:
       run: terraform plan -no-color -input=false
       continue-on-error: true
 
-    - name: Terraform Apply
-      id: apply
-      run: terraform apply -auto-approve -no-color
-      continue-on-error: true
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # - name: Terraform Apply
+    #   id: apply
+    #   run: terraform apply -auto-approve -no-color
+    #   continue-on-error: true
+    #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     - name: Force new deployment
       run: |

@@ -1,30 +1,42 @@
 # -*- coding: utf-8 -*-
 from diagrams import Diagram, Cluster
-from diagrams.aws.network import VPC, InternetGateway, RouteTable, ALB
+from diagrams.aws.network import VPC, InternetGateway, PublicSubnet, ElbApplicationLoadBalancer
 from diagrams.aws.compute import ECS, Fargate
-from diagrams.aws.network import PublicSubnet
-from diagrams.aws.security import SecurityGroup
-from diagrams.aws.devtools import CodeCommit
+from diagrams.aws.security import IAMRole
+from diagrams.aws.management import Cloudwatch
+from diagrams.aws.general import InternetAlt1
 
-with Diagram("AWS Fargate Web App Architecture", show=False, direction="TB"):
+with Diagram("AWS ECS Fargate Architecture", show=True, direction="TB"):
+    internet = InternetAlt1("Internet")
+    with Cluster("us-west-2"):
+        with Cluster("VPC"):
+            igw = InternetGateway("Internet Gateway")
+            alb = ElbApplicationLoadBalancer("ALB")
+            internet >> igw >> alb
+            with Cluster("ECS Cluster"):
+                with Cluster("us-west-2a"):
+                    with Cluster("Public Subnets"):
+                        subnet1 = PublicSubnet("Public Subnet 1")
+                    with Cluster("Fargate"):
+                        task = Fargate("nginxdemos/hello Task")
+                        service = Fargate("Fargate Service")
+                        iam_role = IAMRole("Task Execution Role")
+                        logs = Cloudwatch("CloudWatch Logs")
 
-    with Cluster("VPC: webapp_vpc"):
-        igw = InternetGateway("Internet Gateway")
-        rt = RouteTable("Route Table")
+                        alb >> [subnet1]
+                        [subnet1] >> service
+                        service >> task >> logs
+                        iam_role >> task
+                with Cluster("us-west-2b"):
+                    with Cluster("Public Subnets"):
+                        subnet2 = PublicSubnet("Public Subnet 2")
+                    with Cluster("Fargate"):
+                        task = Fargate("nginxdemos/hello Task")
+                        service = Fargate("Fargate Service")
+                        iam_role = IAMRole("Task Execution Role")
+                        logs = Cloudwatch("CloudWatch Logs")
 
-        with Cluster("Public Subnets"):
-            subnet1 = PublicSubnet("Subnet 1 (us-east-1a)")
-            subnet2 = PublicSubnet("Subnet 2 (us-east-1b)")
-
-        alb = ALB("Application Load Balancer")
-        sg = SecurityGroup("Web Security Group")
-
-        ecs_cluster = ECS("ECS Cluster")
-        task = Fargate("nginxdemos/hello Task")
-        service = Fargate("Fargate Service")
-
-        igw >> rt >> [subnet1, subnet2]
-        [subnet1, subnet2] >> alb >> service
-        service >> task
-        ecs_cluster >> service
-        sg >> alb
+                        alb >> [subnet2]
+                        [subnet2] >> service
+                        service >> task >> logs
+                        iam_role >> task
