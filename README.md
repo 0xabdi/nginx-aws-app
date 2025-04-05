@@ -1,10 +1,5 @@
 # nginx-aws-app
-A simple app running on nginx docker container on AWS
-
-## Authentication to aws account
-```sh
-    aws configure
-```
+A simple app running on nginx docker container hosted on AWS ECS Fargate cluster.
 
 ## Diagram
 ```sh

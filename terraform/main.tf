@@ -24,9 +24,9 @@ resource "aws_internet_gateway" "main" {
 # Public Subnets
 resource "aws_subnet" "public" {
   count                   = 2
-  vpc_id                 = aws_vpc.main.id
-  cidr_block             = "10.0.${count.index + 1}.0/24"
-  availability_zone      = data.aws_availability_zones.available.names[count.index]
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.${count.index + 1}.0/24"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
   tags = {
@@ -84,20 +84,6 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-# ECR Repository
-resource "aws_ecr_repository" "app" {
-  name = "${var.project_name}-app"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  tags = {
-    Name        = "${var.project_name}-ecr"
-    Environment = var.environment
-  }
-}
-
 # ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-cluster"
@@ -137,14 +123,14 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "${var.project_name}-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                     = 256
-  memory                  = 512
-  execution_role_arn      = aws_iam_role.ecs_task_execution_role.arn
+  cpu                      = 256
+  memory                   = 512
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
     {
       name  = "${var.project_name}-container"
-      image = "${aws_ecr_repository.app.repository_url}:latest"
+      image = "nginxdemos/hello"
       portMappings = [
         {
           containerPort = 80
@@ -198,48 +184,4 @@ resource "aws_ecs_service" "app" {
     Name        = "${var.project_name}-ecs-service"
     Environment = var.environment
   }
-}
-
-
-output "ecr_repository_url" {
-  value = aws_ecr_repository.app.repository_url
-}
-
-output "ecs_cluster_name" {
-  value = aws_ecs_cluster.main.name
-}
-
-output "ecs_service_name" {
-  value = aws_ecs_service.app.name
-}
-
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-}
-
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  default     = "us-west-2"
-}
-
-variable "project_name" {
-  description = "Project name to be used for tagging"
-  type        = string
-  default     = "hello-world"
-}
-
-variable "environment" {
-  description = "Environment (dev/staging/prod)"
-  type        = string
-  default     = "dev"
 }
