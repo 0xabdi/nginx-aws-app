@@ -1,7 +1,11 @@
 # nginx-aws-app
 A simple app running on nginx docker container hosted on AWS ECS Fargate cluster.
 
-## Diagram
+## Prerequisites
+AWS access key and secret key needs to be generated from your AWS account and stored as [Github Action Repository Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) ( `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`). The AWS region should also be set in the `.github/workflows/deploy.yml` file as `AWS_REGION`.
+
+## Architecture
+The architecture diagram for was generated using graphviz and the diagrams python library. Run the following command to generate the diagram on a MacOS machine:
 ```sh
     brew install graphviz
     python3 -m venv env && \
