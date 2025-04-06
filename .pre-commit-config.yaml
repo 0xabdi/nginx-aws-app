@@ -1,0 +1,50 @@
+---
+repos:
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-byte-order-marker
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-encoding-pragma
+      - id: mixed-line-ending
+      - id: no-commit-to-branch
+      - id: pretty-format-json
+        # - id: trailing-whitespace-fixer
+  - repo: "https://github.com/gruntwork-io/pre-commit"
+    rev: v0.1.22
+    hooks:
+      # - id: gofmt
+      - id: helmlint
+      - id: shellcheck
+      - id: terraform-fmt
+      - id: terraform-validate
+      - id: tflint
+      - id: yapf
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.76.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: terraform_tfsec
+        files: ^examples
+        args:
+          - "-a --exclude-downloaded-modules --concise-output"
+      - id: terraform_docs
+        args:
+          - --args=--output-file=""
+  - repo: https://github.com/trufflesecurity/trufflehog
+    rev: ""
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data.
+        entry: bash -c 'trufflehog git --branch=$(git rev-parse --abbrev-ref HEAD) file://.' --no-update
+        language: system
+        stages: ["commit", "push"]
