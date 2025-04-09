@@ -18,11 +18,9 @@ repos:
       - id: mixed-line-ending
       - id: no-commit-to-branch
       - id: pretty-format-json
-        # - id: trailing-whitespace-fixer
   - repo: "https://github.com/gruntwork-io/pre-commit"
     rev: v0.1.22
     hooks:
-      # - id: gofmt
       - id: helmlint
       - id: shellcheck
       - id: terraform-fmt
