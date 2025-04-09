@@ -2,7 +2,37 @@
 A simple app running on nginx docker container hosted on AWS ECS Fargate cluster.
 
 ## Prerequisites
-AWS access key and secret key needs to be generated from your AWS account and stored as [Github Action Repository Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) ( `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`). The AWS region should also be set in the `.github/workflows/deploy.yml` file as `AWS_REGION`.
+AWS access key and secret key needs to be generated from your AWS account and either:
+ 1. Stored as [Github Action Repository Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions) ( `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`) if you want to use Github Actions to automate the deployment process. The AWS region should also be set in the `.github/workflows/deploy.yml` file as `AWS_REGION`.
+ 2. Configured in your local machine using the AWS CLI as below if you want to do the deployment from your local machine:
+```sh
+    $ aws configure
+        AWS Access Key ID [None]: <your_access_key_id>
+        AWS Secret Access Key [None]: <your_secret_access_key>
+        Default region name [None]: us-west-2
+        Default output format [None]: json
+```
+
+## Deploying the App from your local machine
+After configuring the AWS credentials, run the following command to deploy the app:
+```sh
+    terraform init && \
+    terraform plan && \
+    terraform apply --auto-approve
+```
+
+## Accessing the App
+After the app is deployed, you can access it using the DNS name of the load balancer which will be displayed as an output after the `terraform apply` command is run. The DNS name will look something like this:
+```
+    http://a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0-1234567890.us-west-2.elb.amazonaws.com
+```
+You can also find the DNS name in the AWS console under the EC2 service -> Load Balancers. Click on the load balancer and you will see the DNS name in the description tab.
+
+## Cleaning Up 
+After you are done testing, run the following command to destroy the resources created by terraform:
+```sh
+    terraform destroy --auto-approve
+```
 
 ## Architecture
 
