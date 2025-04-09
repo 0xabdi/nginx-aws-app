@@ -41,7 +41,7 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
-      continue-on-error: true
+      # continue-on-error: true
 
     # - name: Terraform Apply
     #   id: apply
@@ -49,6 +49,6 @@ jobs:
     #   continue-on-error: true
     #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
-    - name: Force new deployment
-      run: |
-        aws ecs update-service --cluster hello-world-cluster --service hello-world-service --force-new-deployment
+    # - name: Force new deployment
+    #   run: |
+    #     aws ecs update-service --cluster nginx-cluster --service nginx-service --force-new-deployment

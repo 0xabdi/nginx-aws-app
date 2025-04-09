@@ -1,7 +1,3 @@
-output "ecs_cluster_name" {
-  value = aws_ecs_cluster.main.name
-}
-
-output "ecs_service_name" {
-  value = aws_ecs_service.app.name
+output "alb_hostname" {
+  value = aws_alb.main.dns_name
 }
