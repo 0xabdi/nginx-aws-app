@@ -1,5 +1,3 @@
-# ecs.tf
-
 resource "aws_ecs_cluster" "main" {
   name = "nginx-cluster"
 }
@@ -30,7 +28,7 @@ resource "aws_ecs_task_definition" "app" {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = aws_cloudwatch_log_group.nginx_log_group.name
-          "awslogs-region"        = var.aws_region
+          "awslogs-region"        = "us-west-2"
           "awslogs-stream-prefix" = "ecs"
         }
       }

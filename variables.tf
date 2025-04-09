@@ -1,17 +1,6 @@
-# variables.tf
-
-variable "aws_region" {
-  description = "The AWS region things are created in"
-}
-
 variable "ec2_task_execution_role_name" {
   description = "ECS task execution role name"
   default     = "myEcsTaskExecutionRole"
-}
-
-variable "ecs_auto_scale_role_name" {
-  description = "ECS auto scale role name"
-  default     = "myEcsAutoScaleRole"
 }
 
 variable "az_count" {
