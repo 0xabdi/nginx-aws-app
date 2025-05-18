@@ -9,21 +9,29 @@ on:
 env:
   AWS_REGION: us-west-2
 
+permissions:  # added using https://github.com/step-security/secure-repo
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
     
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - uses: hashicorp/setup-terraform@v3
+    - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
 
     - name: Terraform fmt
       id: fmt
@@ -50,5 +58,6 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     - name: Force new deployment
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         aws ecs update-service --cluster nginx-cluster --service nginx-service --force-new-deployment
