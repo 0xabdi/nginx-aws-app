@@ -58,5 +58,6 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     - name: Force new deployment
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         aws ecs update-service --cluster nginx-cluster --service nginx-service --force-new-deployment
