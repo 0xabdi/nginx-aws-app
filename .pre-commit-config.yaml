@@ -3,6 +3,7 @@ repos:
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
     rev: v4.4.0
     hooks:
+      - id: trailing-whitespace
       - id: check-added-large-files
       - id: check-byte-order-marker
       - id: check-executables-have-shebangs
@@ -45,3 +46,11 @@ repos:
         entry: bash -c 'trufflehog git --branch=$(git rev-parse --abbrev-ref HEAD) file://.' --no-update
         language: system
         stages: ["commit", "push"]
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.16.3
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v2.17.2
+    hooks:
+      - id: pylint
